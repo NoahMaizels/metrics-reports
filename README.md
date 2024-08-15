@@ -37,3 +37,10 @@
     ```
     node count-overlays.js
     ```
+1. For `graphs.js`
+
+    a. Update line 30 with current month name so the correct month range is highlighted
+    b. Update month names on line 102
+    c. For `lineDatasets` on line 104, for each titled entry with six numerical values, delete the first value (corresponding to the oldest month which is no longer going to be shown in the most recent report), and add the new value to the furthest value on the right for the corresponding array of values   
+    d. After making all the updates, run `node graphs.js`, which will generate the article graph images. Append `-Month-Year.png` to the the end of each image title. Copy all images to blog's static image folder at `https://github.com/ethersphere/ethswarm-blog-hugo/tree/main/static/uploads` 
+    e. Use https://docs.google.com/spreadsheets/d/1EkHyRJmnu9GClZK2Jg8cPgXHvrDwPY33p9LSBhwfeNE/edit?usp=sharing template to generate country breakdown image
