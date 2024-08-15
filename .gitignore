@@ -4,7 +4,12 @@ node_modules/
 # Environment files
 .env
 
-# Outputs
+# Ignore all contents in these folders
 network/*
 readsi/*
 swarmscan/*
+
+# But don't ignore the folders themselves
+!network/
+!readsi/
+!swarmscan/
