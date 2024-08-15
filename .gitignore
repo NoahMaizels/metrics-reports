@@ -5,6 +5,6 @@ node_modules/
 .env
 
 # Outputs
-network
-readsi
-swarmscan
+network/*
+readsi/*
+swarmscan/*
