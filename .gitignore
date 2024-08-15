@@ -13,3 +13,8 @@ swarmscan/*
 !network/
 !readsi/
 !swarmscan/
+
+# Don't ignore .gitkeep files in those folders
+!network/.gitkeep
+!readsi/.gitkeep
+!swarmscan/.gitkeep

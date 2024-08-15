@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { table } = require('console');
 
 // Load the JSON file
 const dataPath = path.join(__dirname, 'readsi/rewards-july-2024.json');
@@ -9,8 +8,9 @@ const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 // Filter data for July 2024
 const july2024Data = data.filter(entry => entry.Time.startsWith('2024-07'));
 
-// Extract reward values
+// Extract reward values and unique overlays
 const rewardValues = july2024Data.map(entry => entry.Reward);
+const uniqueOverlays = new Set(july2024Data.map(entry => entry.Overlay));
 
 // Calculate sum
 const totalReward = rewardValues.reduce((acc, reward) => acc + reward, 0);
@@ -29,9 +29,13 @@ if (rewardValues.length % 2 === 0) {
     medianReward = rewardValues[middleIndex];
 }
 
+// Count unique overlays with rewards
+const uniqueOverlayCount = uniqueOverlays.size;
+
 // Print the results in a table format
 console.table([
     { Metric: 'Total Reward', Value: totalReward },
     { Metric: 'Mean Reward', Value: meanReward },
-    { Metric: 'Median Reward', Value: medianReward }
+    { Metric: 'Median Reward', Value: medianReward },
+    { Metric: 'Unique Overlays with Rewards', Value: uniqueOverlayCount }
 ]);

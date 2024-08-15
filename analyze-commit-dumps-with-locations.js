@@ -18,8 +18,11 @@ const julyEnd = new Date('2024-07-31T23:59:59Z').getTime();
 // Variable to keep track of the total number of nodes
 let totalNodes = 0;
 
+// Variable to count the number of times a warning occurs
+let warningCount = 0;
+
 // Stream the JSON file
-fs.createReadStream('swarmscan/swarmscan-events-redistribution-committed-2024-08-15-03-24-47.json')
+fs.createReadStream('swarmscan/committed-events.json')
     .pipe(JSONStream.parse('events.*'))
     .on('data', (event) => {
         // Ensure event has a blockTime and falls within July 2024
@@ -39,24 +42,33 @@ fs.createReadStream('swarmscan/swarmscan-events-redistribution-committed-2024-08
                         countryOverlayMap[country].add(overlay);
                     }
                 } else {
+                    // Increment the warning counter and log the warning
+                    warningCount++;
                     console.warn('Warning: Event missing node or overlay:', event);
                 }
             }
         }
     })
     .on('end', () => {
-        Object.keys(countryOverlayMap).forEach(country => {
-            if (country !== 'Unknown') {
-                const overlaySet = countryOverlayMap[country];
-                if (overlaySet.size >= 100) {
-                    resultMap[country] = overlaySet;
-                } else {
-                    overlaySet.forEach(overlay => resultMap['Other'].add(overlay));
-                }
-            } else {
-                resultMap['Unknown'] = countryOverlayMap['Unknown'];
-            }
+        // Sort countries by the size of their overlay set in descending order
+        const sortedCountries = Object.keys(countryOverlayMap)
+            .filter(country => country !== 'Unknown')
+            .sort((a, b) => countryOverlayMap[b].size - countryOverlayMap[a].size);
+
+        // Add top 5 countries to the resultMap
+        sortedCountries.slice(0, 5).forEach(country => {
+            resultMap[country] = countryOverlayMap[country];
         });
+
+        // Aggregate remaining countries into 'Other'
+        sortedCountries.slice(5).forEach(country => {
+            countryOverlayMap[country].forEach(overlay => resultMap['Other'].add(overlay));
+        });
+
+        // Include 'Unknown' in the resultMap if it exists
+        if (countryOverlayMap['Unknown']) {
+            resultMap['Unknown'] = countryOverlayMap['Unknown'];
+        }
 
         // Create a table with column headers
         const table = new Table({
@@ -74,6 +86,9 @@ fs.createReadStream('swarmscan/swarmscan-events-redistribution-committed-2024-08
 
         // Print the sum total number of nodes included in the results
         console.log(`\nTotal number of unique nodes included in the results: ${totalNodes}`);
+
+        // Print the total number of warnings
+        console.log(`\nTotal number of events missing node or overlay: ${warningCount}`);
     })
     .on('error', (err) => {
         console.error('Error parsing JSON:', err);
