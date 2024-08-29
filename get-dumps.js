@@ -143,9 +143,9 @@ const main = async () => {
     const daysInMonth = new Date(year, month, 0).getDate();
     
     for (let day = 1; day <= daysInMonth; day++) {
-      for (let hour = 0; hour < 24; hour += 12) {
+      for (let hour = 0; hour < 24; hour += 3) {
         const fileName = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}-${String(hour).padStart(2, '0')}.json.gz`;
-        const fileUrl = `https://swarmscan.sos-ch-dk-2.exo.io/network/dumps/${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}/${fileName}`;
+        const fileUrl = ` `;
         const filePath = path.join(dirPath, fileName);
         const jsonFilePath = path.join(dirPath, `${fileName.replace('.gz', '')}`);
         
