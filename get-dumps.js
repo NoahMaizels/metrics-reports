@@ -53,12 +53,52 @@ const deleteFilesInDirectory = async (dirPath) => {
   await Promise.all(files.map(file => fs.promises.unlink(path.join(dirPath, file))));
 };
 
-// Function to ask user if they want to overwrite existing data
-const askOverwriteConfirmation = async (dirPath) => {
+// Function to check how many dumps are completely downloaded
+const countCompletedDumps = async (dirPath, year, month, daysInMonth) => {
+  let completedDumps = 0;
+  for (let day = 1; day <= daysInMonth; day++) {
+    for (let hour = 0; hour < 24; hour += 3) {
+      const expectedFileName = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}-${String(hour).padStart(2, '0')}.json`;
+      const expectedFilePath = path.join(dirPath, expectedFileName);
+      if (fs.existsSync(expectedFilePath)) {
+        completedDumps++;
+      }
+    }
+  }
+  return completedDumps;
+};
+
+// Updated function to ask user if they want to overwrite existing data
+const askOverwriteConfirmation = async (dirPath, year, month, daysInMonth) => {
+  const totalDumps = (24 / 3) * daysInMonth; // total number of dumps for the month
+  const completedDumps = await countCompletedDumps(dirPath, year, month, daysInMonth);
+  
+  console.log(`The directory ${dirPath} contains ${completedDumps} out of ${totalDumps} dumps.`);
+  
+  if (completedDumps === totalDumps) {
+    console.log('All dumps have been successfully downloaded.');
+  } else {
+    console.log(`You have downloaded ${completedDumps} of ${totalDumps} dumps.`);
+  }
+  
   return new Promise((resolve) => {
-    rl.question(`The directory ${dirPath} is not empty. Do you want to delete existing files and continue? (yes/no): `, (answer) => {
-      const response = answer.trim().toLowerCase();
-      resolve(response === 'yes' || response === 'y');
+    console.log('\nChoose an option:');
+    console.log('1. Delete everything in the directory and re-download');
+    console.log('2. Continue downloading dumps starting from where the process last stopped');
+    console.log('3. Do nothing and exit');
+
+    rl.question('Enter your choice (1, 2, or 3): ', (answer) => {
+      const response = answer.trim();
+      if (response === '1') {
+        resolve('delete');
+      } else if (response === '2') {
+        resolve('continue');
+      } else if (response === '3') {
+        resolve('exit');
+      } else {
+        console.log('Invalid choice. Exiting script.');
+        resolve(null); // exit in case of invalid input
+      }
     });
   });
 };
@@ -128,11 +168,20 @@ const main = async () => {
     const dirPath = path.join('network', 'dumps', `${year}`, `${String(month).padStart(2, '0')}`);
     await ensureDirectoryExists(dirPath);
 
+    const daysInMonth = new Date(year, month, 0).getDate();
+    
     if (!(await isDirectoryEmpty(dirPath))) {
-      const overwrite = await askOverwriteConfirmation(dirPath);
-      if (overwrite) {
+      const userChoice = await askOverwriteConfirmation(dirPath, year, month, daysInMonth);
+      
+      if (userChoice === 'delete') {
         console.log(`Deleting existing files in ${dirPath}`);
         await deleteFilesInDirectory(dirPath);
+      } else if (userChoice === 'continue') {
+        console.log('Continuing download from where it stopped.');
+      } else if (userChoice === 'exit') {
+        console.log('Exiting script.');
+        rl.close();
+        return;
       } else {
         console.log('Exiting script.');
         rl.close();
@@ -140,23 +189,25 @@ const main = async () => {
       }
     }
 
-    const daysInMonth = new Date(year, month, 0).getDate();
-    
     for (let day = 1; day <= daysInMonth; day++) {
-      for (let hour = 0; hour < 24; hour += 3) {
+      for (let hour = 0; hour < 24; hour += 12) {
+        const baseUrl = 'https://swarmscan.sos-ch-dk-2.exo.io/network/dumps';
         const fileName = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}-${String(hour).padStart(2, '0')}.json.gz`;
-        const fileUrl = ` `;
+        const fileUrl = `${baseUrl}/${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}/${fileName}`;
+        
         const filePath = path.join(dirPath, fileName);
         const jsonFilePath = path.join(dirPath, `${fileName.replace('.gz', '')}`);
         
-        console.log(`Downloading file: ${fileName}`);
-        await downloadFile(fileUrl, filePath);
-        
-        console.log(`Decompressing file: ${fileName}`);
-        await decompressFile(filePath, jsonFilePath);
+        if (!fs.existsSync(jsonFilePath)) {
+          console.log(`Downloading file: ${fileName}`);
+          await downloadFile(fileUrl, filePath);
+          
+          console.log(`Decompressing file: ${fileName}`);
+          await decompressFile(filePath, jsonFilePath);
 
-        console.log(`Deleting compressed file: ${fileName}`);
-        await deleteFile(filePath);
+          console.log(`Deleting compressed file: ${fileName}`);
+          await deleteFile(filePath);
+        }
       }
     }
 

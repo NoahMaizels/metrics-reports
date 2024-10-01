@@ -6,14 +6,14 @@ This metric shows the total rewards paid out across the entire network for each 
 
 | Month     | Total Network Rewards (xBZZ) |
 |-----------|------------------------------|
-| February  | 152,974                      |
-| March     | 104,657                      |
 | April     | 76,024                       |
 | May       | 109,209                      |
 | June      | 112,037                      |
-| July      |  105,855                    |
+| July      | 105,855                    |
+| August    |  62,093                |
+| September |  99,124                |
 
-![chart-Total-Network-Monthly-Rewards](/uploads/chart-Total-Network-Monthly-Rewards-July-2024.png)
+![chart-Total-Network-Monthly-Rewards](/uploads/chart-Total-Network-Monthly-Rewards-September-2024.png)
 
 
 
@@ -22,13 +22,13 @@ This metric is the median win amount for each win event.
 
 | Month     | Median Win Values (xBZZ) |
 |-----------|---------------------------|
-| February  | 49.15                     |
-| March     | 27.43                     |
 | April     | 22.27                     |
 | May       | 32.65                     |
 | June      | 33.92                     |
 | July      |   33.67                   |
-![chart-Monthly-Median-Win-Values](/uploads/chart-Monthly-Median-Win-Values-July-2024.png)
+| August    |  12.48                      |
+| September |   30.05                      |
+![chart-Monthly-Median-Win-Values](/uploads/chart-Monthly-Median-Win-Values-September-2024.png)
 
 
 
@@ -38,14 +38,14 @@ This metric is the average win amount for each win event.
 
 | Month     | Average Win Values (xBZZ)  |
 |-----------|----------------------------|
-| February  | 54.42                      |
-| March     | 34.96                      |
 | April     | 25.43                      |
 | May       | 36.56                      |
 | June      | 37.07                      |
 | July      | 36.05                    |
+| August      |  19.44                    |
+| September      |   32.58                   |
 
-![chart-Monthly-Average-Win-Values](/uploads/chart-Monthly-Average-Win-Values-July-2024.png)
+![chart-Monthly-Average-Win-Values](/uploads/chart-Monthly-Average-Win-Values-September-2024.png)
 
 
 
@@ -55,14 +55,14 @@ This metric shows the average monthly earnings for an active staking node (with 
 
 | Month     | Avg Total Earnings per Node (xBZZ) |
 |-----------|------------------------------------|
-| February  | 13.21                              |
-| March     | 7.71                               |
 | April     | 5.64                               |
 | May       | 10.66                               |
 | June      | 9.37                               |
 | July      | 8.22                    |
+| August      |    8.27                   |
+| September      |   17.49         |
 
-![chart-Avg-Total-Earnings-per-Node](/uploads/chart-Avg-Total-Earnings-per-Node-July-2024.png)
+![chart-Avg-Total-Earnings-per-Node](/uploads/chart-Avg-Total-Earnings-per-Node-September-2024.png)
 
 
 
@@ -72,14 +72,14 @@ This metric shows the total active staking nodes by month (as defined by unique 
 
 | Month     | Total Active Staking Nodes |
 |-----------|----------------------------|
-| February  | 11,576                     |
-| March     | 13,571                     |
 | April     | 13,486                     |
 | May       | 10,245                    |
 | June      | 11,950                      |
 | July      |   12,871                  |
+| August    |  7,506                   |
+| September |   5,667                 |
 
-![chart-Total-Active-Staking-Nodes](/uploads/chart-Total-Active-Staking-Nodes-July-2024.png)
+![chart-Total-Active-Staking-Nodes](/uploads/chart-Total-Active-Staking-Nodes-September-2024.png)
 
 
 ## Total Reachable Full Nodes Regardless of Active Status
@@ -93,20 +93,23 @@ In May there were unique full nodes with reserve size greater than zero which we
 | May       | 16,000                     |
 | June      | 18,916                     |
 | July      |  20,898                  |
+| August    |  24,168                     |
+| September    |  18,589                     |
+
 ## Total Winning Nodes by Month
 
 This metric shows the total number of unique active staking nodes which have won at least once within the month.
 
 | Month     | Total Winning Nodes  |
 |-----------|----------------------|
-| February  | 2,814                |
-| March     | 2,413                |
 | April     | 2,486                |
 | May       | 2,554                |
 | June      | 2,680                |
-| July      | 2,622                  |
+| July      | 2,622                |
+| August    | 2,769                |
+| September | 2,379                |
 
-![chart-Number-of-Winning-Staking-Nodes-by-Month](/uploads/chart-Number-of-Winning-Staking-Nodes-by-Month-July-2024.png)
+![chart-Number-of-Winning-Staking-Nodes-by-Month](/uploads/chart-Number-of-Winning-Staking-Nodes-by-Month-September-2024.png)
 
 
 ## Total Active Staking Nodes by Country
@@ -116,13 +119,16 @@ This metric shows the total number of active staking nodes across the top four c
 
 |               | China  | Germany | Finland | Unknown | United States | Other |
 |---------------|--------|---------|---------|---------|---------------|-------|
-| February      | 6,787  | 1,958   | 1,952   | 688     | 116           | 75    |
-| March         | 7,785  | 1,953   | 2,232   | 1,408   | 91            | 102   |
 | April         | 7,249  | 1,912   | 2,291   | 1,851   | 92            | 91    |
 | May           | 6,010  | 1,739   | 2,173   | 1,899   | 84            | 69    |
-| June           | 7,480  |  1,718   |   2,276  |370    |    79          |  27    |
-| July           | 8,539   | 1,828     | 2,395     | 1    |    83           |  25     |
-![Total Staking Nodes by Country.png](/uploads/Total-Active-Staking-Nodes-by-Country-July-2024.png)
+| June          | 7,480  | 1,718   |   2,276 |370      |    79         |  27   |
+| July          | 8,539  | 1,828   | 2,395   | 1       |    83         |  25   |
+| August        | 5,406  | 886     | 1,157   |  1      |   40          | 16      |
+| September     | 3,440  | 655     | 1,503   | 3       |    N/A        |  66     |
+
+Spain + Netherlands
+
+![Total Staking Nodes by Country.png](/uploads/Total-Active-Staking-Nodes-by-Country-September-2024.png)
 
 
 

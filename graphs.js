@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const { EventEmitter } = require('events');
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 EventEmitter.defaultMaxListeners = 20;  // Or some other number greater than your current max.
 
@@ -12,7 +13,31 @@ if (!fs.existsSync(graphsDir)) {
     fs.mkdirSync(graphsDir);
 }
 
-async function generateLineChart(data) {
+// Function to prompt user input for year and month
+function askUserInput(question) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    return new Promise((resolve) => {
+        rl.question(question, (answer) => {
+            rl.close();
+            resolve(answer);
+        });
+    });
+}
+
+// Map number to month name
+function getMonthName(monthNumber) {
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[monthNumber - 1];  // Convert 1-based index to 0-based
+}
+
+async function generateLineChart(data, inputMonth, inputYear) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -27,7 +52,12 @@ async function generateLineChart(data) {
 
     const yLabel = yAxisLabels[data.title];
 
-    const highlightIndex = data.months.indexOf('July');
+    // Convert user input month number to month name
+    const monthName = getMonthName(parseInt(inputMonth));
+
+    // Dynamically highlight the user input month
+    const highlightIndex = data.months.indexOf(monthName);
+
     const traces = [{
         x: data.months,
         y: data.values,
@@ -43,6 +73,7 @@ async function generateLineChart(data) {
         showlegend: false
     }];
 
+    // Highlight the specified month if found
     if (highlightIndex !== -1 && highlightIndex > 0) {
         traces.push({
             x: data.months.slice(highlightIndex - 1, highlightIndex + 1),
@@ -92,52 +123,67 @@ async function generateLineChart(data) {
 
     await page.waitForSelector('#plotly-div .plot');
 
+    // Create the filename using the month name and year
+    const outputFilePath = path.join(
+        graphsDir, 
+        `chart-${data.title.replace(/\s+/g, '-')}-${monthName}-${inputYear}.png`
+    );
+
     const chart = await page.$('#plotly-div');
-    const outputFilePath = path.join(graphsDir, `chart-${data.title.replace(/\s+/g, '-')}.png`);
     await chart.screenshot({ path: outputFilePath });
 
     await browser.close();
 }
 
-const months = ["February", "March", "April", "May", "June", "July"];
+async function main() {
+    // Ask user for year and month input
+    const inputYear = await askUserInput('Enter the year (e.g., 2024): ');
+    const inputMonth = await askUserInput('Enter the month as a number (e.g., 8 for August): ');
 
-const lineDatasets = [
-    {
-        title: "Total Network Monthly Rewards",
-        values: [152974, 104657, 76024, 109209, 112037, 105855],
-        months: months
-    },
-    {
-        title: "Monthly Median Win Values",
-        values: [49.15, 27.43, 22.27, 32.65, 33.92, 33.67],
-        months: months
-    },
-    {
-        title: "Monthly Average Win Values",
-        values: [54.42, 34.96, 25.43, 36.56, 37.07, 36.05],
-        months: months
-    },
-    {
-        title: "Avg Total Earnings per Node",
-        values: [13.21, 7.71, 5.64, 10.66, 9.37, 8.22],
-        months: months
-    },
-    {
-        title: "Total Active Staking Nodes",
-        values: [11576, 13571, 13486, 10245, 11950, 12871],
-        months: months
-    },
-    {
-        title: "Number of Winning Staking Nodes by Month",
-        values: [2814, 2413, 2486, 2554, 2680, 2622],
-        months: months
-    }
-];
+    const months = ["March", "April", "May", "June", "July", "August"];
 
-lineDatasets.forEach(dataset => {
-    generateLineChart(dataset).then(() => {
-        console.log(`Line chart for ${dataset.title} generated successfully!`);
-    }).catch(error => {
-        console.error(`Error generating line chart for ${dataset.title}:`, error);
+    const lineDatasets = [
+        {
+            title: "Total Network Monthly Rewards",
+            values: [104657, 76024, 109209, 112037, 105855, 62093],
+            months: months
+        },
+        {
+            title: "Monthly Median Win Values",
+            values: [27.43, 22.27, 32.65, 33.92, 33.67, 12.48],
+            months: months
+        },
+        {
+            title: "Monthly Average Win Values",
+            values: [34.96, 25.43, 36.56, 37.07, 36.05, 19.44],
+            months: months
+        },
+        {
+            title: "Avg Total Earnings per Node",
+            values: [7.71, 5.64, 10.66, 9.37, 8.22, 8.27],
+            months: months
+        },
+        {
+            title: "Total Active Staking Nodes",
+            values: [13571, 13486, 10245, 11950, 12871, 7506],
+            months: months
+        },
+        {
+            title: "Number of Winning Staking Nodes by Month",
+            values: [2413, 2486, 2554, 2680, 2622, 2769],
+            months: months
+        }
+    ];
+
+    // Generate charts using the user-provided year and month
+    lineDatasets.forEach(dataset => {
+        generateLineChart(dataset, inputMonth, inputYear).then(() => {
+            console.log(`Line chart for ${dataset.title} generated successfully!`);
+        }).catch(error => {
+            console.error(`Error generating line chart for ${dataset.title}:`, error);
+        });
     });
-});
+}
+
+// Run the main function
+main();
